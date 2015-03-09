@@ -1,7 +1,9 @@
 // Tracks what cell is at what position on all layers.
+var _ = require('lodash');
 
 function createGriddler() {
   var map = {};
+  var cellArraysForLayers = {};
 
   function setCell(layer, cell) {
     var layerMap = map[layer];
@@ -14,6 +16,8 @@ function createGriddler() {
 
     var currentOccupant = layerMap[coords];
     if (currentOccupant) {
+      removeCell(layer, currentOccupant.coords);
+
       if (currentOccupant.d && currentOccupant.d.notifyRemoved) {
         currentOccupant.d.notifyRemoved({
           replacement: cell
@@ -22,6 +26,30 @@ function createGriddler() {
     }
 
     layerMap[coords] = cell;
+    addCellToLayer(layer, cell);
+  }
+
+  // Internal.
+  function addCellToLayer(layer, cell) {
+    var cellArray = cellArraysForLayers[layer];
+    if (!cellArray) {
+      cellArray = [];
+      cellArraysForLayers[layer] = cellArray;
+    }
+    cellArray.push(cell);
+  }
+
+  // Internal.
+  function removeCellFromLayer(layer, cell) {
+    var cellArray = cellArraysForLayers[layer];
+    if (cellArray) {
+      var index = _.findIndex(cellArray, function idMatches(comparisonCell) {
+        return (comparisonCell.d.id === cell.d.id);
+      });
+      if (index !== -1) {
+        cellArray.splice(index, 1);
+      }
+    }
   }
 
   function getCell(layer, coords) {
@@ -34,7 +62,7 @@ function createGriddler() {
     return cell;
   }
 
-  function getCellsOnAllLayers(coords) {
+  function getVerticleSliceAtCoords(coords) {
     var cells = [];
     var coordString = getCoordsString(coords);
     for (var layer in map) {
@@ -48,15 +76,23 @@ function createGriddler() {
 
   function removeCell(layer, coords) {
     if (map[layer]) {
-      delete map[layer][getCoordsString(coords)];
+      var coordsString = getCoordsString(coords);
+      var cell = map[layer][coordsString]
+      removeCellFromLayer(layer, cell);
+      delete map[layer][coordsString];
     }
+  }
+
+  function getLayer(layerName) {
+    return cellArraysForLayers[layerName];
   }
 
   return {
     setCell: setCell,
     getCell: getCell,
-    getCellsOnAllLayers: getCellsOnAllLayers,
-    removeCell: removeCell
+    getVerticleSliceAtCoords: getVerticleSliceAtCoords,
+    removeCell: removeCell,
+    getLayer: getLayer
   };
 }
 

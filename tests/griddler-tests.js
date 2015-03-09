@@ -2,16 +2,17 @@ var test = require('tape');
 var createGriddler = require('../griddler').create;
 
 test('Basic tests', function basicTests(t) {
-  t.plan(8);
+  t.plan(9);
 
   var griddler = createGriddler();
 
   var cellOne_A = {
     d: {
+      id: 'one_A',
       notifyRemoved: function notifyRemoved(opts) {
         t.deepEqual(
           opts.replacement, 
-          cellTwo_A,
+          cellOne_C,
           'Cell is notified about its replacement.'
         );
       }
@@ -20,17 +21,23 @@ test('Basic tests', function basicTests(t) {
   };
 
   var cellOne_C = {
-    d: {},
+    d: {
+      id: 'one_C'
+    },
     coords: [10, 11]
   };
 
   var cellOne_B = {
-    d: {},
+    d: {
+      id: 'one_B'
+    },
     coords: [11, 11]
   };
 
   var cellTwo_A = {
-    d: {},
+    d: {
+      id: 'two_A'
+    },
     coords: [10, 11]
   };
 
@@ -61,7 +68,7 @@ test('Basic tests', function basicTests(t) {
   var retrievedTwo_A = griddler.getCell('layer-two', [10, 11]);
   t.deepEqual(retrievedTwo_A, cellTwo_A, 'Set cell two_A is retrieved.');
 
-  var cellsAt10_11 = griddler.getCellsOnAllLayers([10, 11]);
+  var cellsAt10_11 = griddler.getVerticleSliceAtCoords([10, 11]);
   t.deepEqual(
     cellsAt10_11,
     [
@@ -69,6 +76,11 @@ test('Basic tests', function basicTests(t) {
       cellTwo_A
     ],
     'Gets cells on both layers at 10, 11'
+  );
+
+  var layerOneCells = griddler.getLayer('layer-one');
+  t.deepEqual(
+    layerOneCells, [cellOne_B, cellOne_C], 'All cells on layer-one retrieved.'
   );
 
   griddler.removeCell('layer-one', [11, 11]);
