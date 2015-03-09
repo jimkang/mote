@@ -1,0 +1,13 @@
+body {
+  font-family: "helvetica neue";
+}
+
+#neighborhood {
+  width: 100%;
+  min-height: 640px;
+}
+
+.street-cell {
+  stroke: none;
+  fill: purple;
+}
