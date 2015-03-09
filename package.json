@@ -25,6 +25,8 @@
     "browserify": "^8.1.3",
     "cellgridrenderer": "^1.0.1",
     "d3": "^3.5.5",
-    "idmaker": "^0.1.1"
+    "idmaker": "^0.1.1",
+    "probable": "^1.3.0",
+    "seedrandom": "^2.3.11"
   }
 }

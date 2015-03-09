@@ -1,32 +1,36 @@
 var d3 = require('d3');
-var mapper = require('./mapper').create();
+var createLayerRenderer = require('./layer-renderer').create;
+var idmaker = require('idmaker');
+var createProbable = require('probable').createProbable;
+var seedrandom = require('seedrandom');
 
-var streets = [
-  {
-    name: 'Highland Ave.',
-    start: [0, 1],
-    end: [20, 1]
-  },
-  {
-    name: 'Gibbens St.',
-    start: [0, 10],
-    end: [20, 10]
-  },
-  {
-    name: 'Cambria St.',
-    start: [0, 20],
-    end: [21, 20]
-  },
-  {
-    name: 'Benton Rd.',
-    start: [1, 0],
-    end: [1, 20]
-  },
-  {
-    name: 'Central St.',
-    start: [20, 0],
-    end: [20, 20]
+var seed = (new Date).getTime().toString();
+
+console.log('Seed:', seed);
+
+var probable = createProbable({
+  random: seedrandom(seed)
+});
+
+var floorRenderer = createLayerRenderer({
+  cellWidth: 25,
+  cellHeight: 25,
+  cellClass: 'street-cell',  
+  layerSelector: '.streets',
+});
+
+function generateCell() {
+  return {
+    d: {
+      id: idmaker.randomId(5)
+    },
+    coords: [
+      probable.roll(10),
+      probable.roll(10)
+    ]
   }
-];
+}
 
-streets.forEach(mapper.renderStreet);
+var floorCells = d3.range(100).map(generateCell);
+
+floorRenderer.render(floorCells);
