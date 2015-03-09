@@ -1,4 +1,4 @@
-var d3 = require('d3');
+var d3 = require('./lib/d3-small');
 var createLayerRenderer = require('./layer-renderer').create;
 var idmaker = require('idmaker');
 var createProbable = require('probable').createProbable;
