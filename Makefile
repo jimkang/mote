@@ -27,4 +27,4 @@ pch: smash
 		-o pch.js
 
 test:
-	node tests/basictests.js
+	node tests/griddler-tests.js
