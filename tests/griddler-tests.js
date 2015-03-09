@@ -2,7 +2,7 @@ var test = require('tape');
 var createGriddler = require('../griddler').create;
 
 test('Basic tests', function basicTests(t) {
-  t.plan(7);
+  t.plan(8);
 
   var griddler = createGriddler();
 
@@ -69,5 +69,10 @@ test('Basic tests', function basicTests(t) {
       cellTwo_A
     ],
     'Gets cells on both layers at 10, 11'
+  );
+
+  griddler.removeCell('layer-one', [11, 11]);
+  t.equal(
+    griddler.getCell('layer-one', [11, 11]), undefined, 'removeCell works.'
   );
 });

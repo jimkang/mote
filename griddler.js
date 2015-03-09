@@ -46,10 +46,17 @@ function createGriddler() {
     return cells;
   }
 
+  function removeCell(layer, coords) {
+    if (map[layer]) {
+      delete map[layer][getCoordsString(coords)];
+    }
+  }
+
   return {
     setCell: setCell,
     getCell: getCell,
-    getCellsOnAllLayers: getCellsOnAllLayers
+    getCellsOnAllLayers: getCellsOnAllLayers,
+    removeCell: removeCell
   };
 }
 
