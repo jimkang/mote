@@ -44,7 +44,9 @@ function start() {
 
   var floor = d3.select('.streets');
   floor.on('click', function floorClicked() {
-    console.log('Click at: ', d3.mouse(floor.node()));
+    var point = d3.mouse(floor.node());
+    var coords = floorRenderer.pointToCoords(point);
+    console.log('Click at ', point, 'which maps to coords', coords);
   });
 }
 

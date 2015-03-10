@@ -68,8 +68,13 @@ function createLayerRenderer(opts) {
     }
   }
 
+  function pointToCoords(point) {
+    return [~~(point[0]/cellWidth), ~~(point[1]/cellHeight)];
+  }
+
   return {
-    render: render
+    render: render,
+    pointToCoords: pointToCoords
   };
 }
 
