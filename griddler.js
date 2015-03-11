@@ -12,14 +12,14 @@ function createGriddler() {
       map[layer] = layerMap;
     }
 
-    var coords = getCoordsString(cell.coords);
+    var coords = getCoordsString(cell.live.coords);
 
     var currentOccupant = layerMap[coords];
     if (currentOccupant) {
-      removeCell(layer, currentOccupant.coords);
+      removeCell(layer, currentOccupant.live.coords);
 
-      if (currentOccupant.d && currentOccupant.d.notifyRemoved) {
-        currentOccupant.d.notifyRemoved({
+      if (currentOccupant.notifyRemoved) {
+        currentOccupant.notifyRemoved({
           replacement: cell
         });
       }
@@ -44,7 +44,7 @@ function createGriddler() {
     var cellArray = cellArraysForLayers[layer];
     if (cellArray) {
       var index = _.findIndex(cellArray, function idMatches(comparisonCell) {
-        return (comparisonCell.d.id === cell.d.id);
+        return (comparisonCell.id === cell.id);
       });
       if (index !== -1) {
         cellArray.splice(index, 1);

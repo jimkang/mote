@@ -7,38 +7,38 @@ test('Basic tests', function basicTests(t) {
   var griddler = createGriddler();
 
   var cellOne_A = {
-    d: {
-      id: 'one_A',
-      notifyRemoved: function notifyRemoved(opts) {
-        t.deepEqual(
-          opts.replacement, 
-          cellOne_C,
-          'Cell is notified about its replacement.'
-        );
-      }
+    id: 'one_A',
+    notifyRemoved: function notifyRemoved(opts) {
+      t.deepEqual(
+        opts.replacement, 
+        cellOne_C,
+        'Cell is notified about its replacement.'
+      );
     },
-    coords: [10, 11]
+    live: {
+      coords: [10, 11]
+    }
   };
 
   var cellOne_C = {
-    d: {
-      id: 'one_C'
-    },
-    coords: [10, 11]
+    id: 'one_C',
+    live: {
+      coords: [10, 11]
+    }
   };
 
   var cellOne_B = {
-    d: {
-      id: 'one_B'
-    },
-    coords: [11, 11]
+    id: 'one_B',
+    live: {
+      coords: [11, 11]
+    }
   };
 
   var cellTwo_A = {
-    d: {
-      id: 'two_A'
-    },
-    coords: [10, 11]
+    id: 'two_A',
+    live: {
+      coords: [10, 11]
+    }
   };
 
   griddler.setCell('layer-one', cellOne_A);

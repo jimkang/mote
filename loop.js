@@ -26,14 +26,17 @@ function start() {
 
   function generateCell() {
     return {
-      d: {
-        id: idmaker.randomId(5)
+      id: idmaker.randomId(5),
+      live: {
+        coords: [
+          probable.roll(10),
+          probable.roll(10)
+        ]
       },
-      coords: [
-        probable.roll(10),
-        probable.roll(10)
-      ]
-    }
+      next: {
+        coords: []
+      }
+    };
   }
 
   var floorCells = d3.range(100).map(generateCell);

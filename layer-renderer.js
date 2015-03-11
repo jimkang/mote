@@ -1,3 +1,5 @@
+var accessor = require('accessor');
+
 function createLayerRenderer(opts) {
   if (!opts) {
     throw new Error('No opts given to createLayerRenderer.');
@@ -12,16 +14,14 @@ function createLayerRenderer(opts) {
   var fadeInDuration = opts.fadeInDuration;
   var fadeOutDuration = opts.fadeOutDuration;
 
-  function cellId(cell) {
-    return cell.d.id;
-  }
+  var cellId = accessor();
   
   function cellX(cell) {
-    return cellWidth * (cell.coords[0] + 0.5);
+    return cellWidth * (cell.live.coords[0] + 0.5);
   }
 
   function cellY(cell) {
-    return cellHeight * (cell.coords[1] + 0.5);
+    return cellHeight * (cell.live.coords[1] + 0.5);
   }
 
   var layer = d3.select(layerSelector);
