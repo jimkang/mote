@@ -22,13 +22,15 @@ run:
 		-x idmaker \
 		-x probable \
 		-x seedrandom \
+		-x lodash
 
-pch: smash-debug # smash
+pch: smash # smash-debug
 	node_modules/.bin/browserify \
 		lib/d3-small.js \
 		-r probable \
 		-r seedrandom \
 		-r idmaker \
+		-r lodash \
 		-o pch.js
 
 test:
