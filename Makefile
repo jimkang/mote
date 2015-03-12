@@ -35,3 +35,6 @@ pch: smash # smash-debug
 
 test:
 	node tests/griddler-tests.js
+	node tests/actions/move-tests.js
+	node tests/actions/take-tests.js
+
