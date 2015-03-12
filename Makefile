@@ -22,7 +22,8 @@ run:
 		-x idmaker \
 		-x probable \
 		-x seedrandom \
-		-x lodash
+		-x lodash \
+		-x async
 
 pch: smash # smash-debug
 	node_modules/.bin/browserify \
@@ -31,6 +32,7 @@ pch: smash # smash-debug
 		-r seedrandom \
 		-r idmaker \
 		-r lodash \
+		-r async \
 		-o pch.js
 
 test:
