@@ -11,12 +11,6 @@ test('Move action', function moveActionTest(t) {
     }
   };
 
-  var move = createMove({
-    vector: [1, 0],
-    respectObstacle: true,
-    griddler: mockGriddler
-  });
-
   var cell = {
     id: 'mover',
     live: {
@@ -26,13 +20,17 @@ test('Move action', function moveActionTest(t) {
     }
   };
 
-  move.go(
-    {
-      actor: cell      
-    },
-    function checkResults(error) {
-      t.ok(!error, 'No error while moving.');
-      t.deepEqual(cell.next.coords, [4, 4]);
-    }
-  );
+  var move = createMove({
+    actor: cell,
+    vector: [1, 0],
+    respectObstacle: true,
+    griddler: mockGriddler
+  });
+
+  move.go(checkResults);
+
+  function checkResults(error) {
+    t.ok(!error, 'No error while moving.');
+    t.deepEqual(cell.next.coords, [4, 4]);
+  }
 });

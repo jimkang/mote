@@ -3,10 +3,12 @@ var callBackOnNextTick = require('conform-async').callBackOnNextTick;
 function createMove(opts) {
   var vector;
   var griddler;
+  var actor;
 
   if (opts) {
     vector = opts.vector;
     griddler = opts.griddler;
+    actor = opts.actor;
   }
 
   if (!vector) {
@@ -15,12 +17,15 @@ function createMove(opts) {
   if (!griddler) {
     throw new Error('No griddler provided to move');
   }
+  if (!actor) {
+    throw new Error('No actor given to move.');
+  }
 
-  function go(actionOpts, done) {
-    var newSpot = addCoords(actionOpts.actor.live.coords, vector);
+  function go(done) {
+    var newSpot = addCoords(actor.live.coords, vector);
     var cellsAtNewSpot = griddler.getVerticleSliceAtCoords(newSpot);
     // TODO: Look for obstacles.
-    actionOpts.actor.next.coords = newSpot;
+    actor.next.coords = newSpot;
     callBackOnNextTick(done);
   }
 

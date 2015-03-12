@@ -24,17 +24,19 @@ test('Take action', function takeActionTest(t) {
   };
 
   var take = createTake({
+    actor: taker,
     what: sword
     // griddler: mockGriddler
   });
 
-  take.go(
-    {
-      actor: taker
-    },
-    function checkResults(error) {
-      t.ok(!error, 'No error while taking.');
-      t.deepEqual(taker.next.inventory, [sword]);
-    }
-  );
+  take.go(checkResults);
+
+  function checkResults(error) {
+    t.ok(!error, 'No error while taking.');
+    t.deepEqual(taker.next.inventory, [sword]);
+  }
 });
+
+// test('Can take', function canTake(t) {
+//   // TODO. take.possible()  
+// });
