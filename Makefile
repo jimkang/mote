@@ -1,4 +1,6 @@
 D3SRC = node_modules/d3/src
+BROWSERIFY = node_modules/.bin/browserify
+UGLIFY = node_modules/.bin/uglifyjs
 
 D3_LIBRARY_FILES = \
 	$(D3SRC)/start.js \
@@ -11,7 +13,7 @@ D3_LIBRARY_FILES = \
 
 smash: $(D3_LIBRARY_FILES)
 	node_modules/.bin/smash $(D3_LIBRARY_FILES) | \
-	node_modules/.bin/uglifyjs - -c -m -o lib/d3-small.js
+	$(UGLIFY) -c -m -o lib/d3-small.js
 
 smash-debug: $(D3_LIBRARY_FILES)
 	node_modules/.bin/smash $(D3_LIBRARY_FILES) > lib/d3-small.js
@@ -26,7 +28,7 @@ run:
 		-x async
 
 pch: smash # smash-debug
-	node_modules/.bin/browserify \
+	$(BROWSERIFY) \
 		lib/d3-small.js \
 		-r probable \
 		-r seedrandom \
@@ -35,9 +37,11 @@ pch: smash # smash-debug
 		-r async \
 		-o pch.js
 
+build: smash
+	$(BROWSERIFY) index.js | $(UGLIFY) -c -m -o mote.js
+
 test:
 	node tests/griddler-tests.js
 	node tests/actions/move-tests.js
 	node tests/actions/take-tests.js
 	node tests/clock-tests.js
-
