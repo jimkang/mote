@@ -37,15 +37,20 @@ function createLayerRenderer(opts) {
       .attr('opacity', fadeInDelay ? 0 : 1);
 
     newCellRenditions.append('rect').attr({
-      x: cellX,
-      y: cellY,
       width: cellWidth,
       height: cellHeight
     });
 
+    var rectsThatNeedUpdating = cellRenditions.select('rect');
+
     if (customizeCellRendition) {
       cellRenditions.each(customizeCellRendition);
     }
+
+    rectsThatNeedUpdating.attr({
+      x: cellX,
+      y: cellY,
+    });
 
     if (fadeInDelay) {
       cellRenditions
