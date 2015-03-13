@@ -2,12 +2,12 @@ body {
   font-family: "helvetica neue";
 }
 
-#neighborhood {
+#board {
   width: 100%;
   min-height: 640px;
 }
 
-.street-cell {
+.floor-cell {
   stroke: none;
   fill: purple;
 }

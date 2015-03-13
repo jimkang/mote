@@ -20,8 +20,8 @@ function start() {
   var floorRenderer = createLayerRenderer({
     cellWidth: 25,
     cellHeight: 25,
-    cellClass: 'street-cell',  
-    layerSelector: '.streets',
+    cellClass: 'floor-cell',
+    layerSelector: '.floor',
   });
 
   function generateCell() {
