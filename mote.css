@@ -9,5 +9,10 @@ body {
 
 .floor-cell {
   stroke: none;
-  fill: purple;
+  fill: hsl(150, 50%, 80%);
+}
+
+.guy-cell {
+  stroke: none;
+  fill: hsl(30, 50%, 50%);
 }
