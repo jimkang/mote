@@ -83,7 +83,7 @@ function createGriddler() {
     }
   }
 
-  function getLayer(layerName) {
+  function getLayerCells(layerName) {
     return cellArraysForLayers[layerName];
   }
 
@@ -92,7 +92,7 @@ function createGriddler() {
     getCell: getCell,
     getVerticleSliceAtCoords: getVerticleSliceAtCoords,
     removeCell: removeCell,
-    getLayer: getLayer
+    getLayerCells: getLayerCells
   };
 }
 

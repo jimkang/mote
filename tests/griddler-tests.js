@@ -78,7 +78,7 @@ test('Basic tests', function basicTests(t) {
     'Gets cells on both layers at 10, 11'
   );
 
-  var layerOneCells = griddler.getLayer('layer-one');
+  var layerOneCells = griddler.getLayerCells('layer-one');
   t.deepEqual(
     layerOneCells, [cellOne_B, cellOne_C], 'All cells on layer-one retrieved.'
   );

@@ -9,6 +9,7 @@ var createClock = require('./clock').create;
 var createMove = require('./actions/move').create;
 var callBackOnNextTick = require('conform-async').callBackOnNextTick;
 var queue = require('queue-async');
+var createFloorLayer = require('./layers/floor-layer').create;
 
 var seed = (new Date).getTime().toString();
 
@@ -18,8 +19,8 @@ var probable = createProbable({
   random: seedrandom(seed)
 });
 
-var floorRenderer;
-var floorCells;
+var layers = {};
+
 var guyRenderer;
 var guyCells;
 var griddler;
@@ -34,17 +35,10 @@ function start() {
     }
   });
 
-  floorCells = d3.range(100).map(generateFloorCell);
-  var setFloorCell = _.curry(griddler.setCell)('floor');
-  floorCells.forEach(setFloorCell);
-
-  floorRenderer = createLayerRenderer({
-    cellWidth: 25,
-    cellHeight: 25,
-    cellClass: 'floor-cell',
-    layerSelector: '.floor',
+  layers.floor = createFloorLayer({
+    probable: probable,
+    griddler: griddler
   });
-
 
   var floor = d3.select('.floor');
   floor.on('click', function floorClicked() {
@@ -100,7 +94,7 @@ function advanceAllToNextState() {
 }
 
 function updateCells() {
-  floorCells.forEach(updateCell);
+  layers.floor.cells.forEach(updateCell);
   guyCells.forEach(updateCell);
 }
 
@@ -113,20 +107,8 @@ function updateCell(cell) {
 }
 
 function renderLayers() {
-  floorRenderer.render(griddler.getLayer('floor'));
-  guyRenderer.render(griddler.getLayer('guys'));  
-}
-
-function generateFloorCell() {
-  return {
-    id: idmaker.randomId(5),
-    live: {
-      coords: [
-        probable.roll(10),
-        probable.roll(10)
-      ]
-    }
-  };
+  layers.floor.render();
+  guyRenderer.render(griddler.getLayerCells('guys'));
 }
 
 function generateGuyCell() {
