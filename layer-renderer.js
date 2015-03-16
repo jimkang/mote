@@ -72,14 +72,9 @@ function createLayerRenderer(opts) {
       deadCellRenditions.remove();
     }
   }
-
-  function pointToCoords(point) {
-    return [~~(point[0]/cellWidth), ~~(point[1]/cellHeight)];
-  }
-
+  
   return {
-    render: render,
-    pointToCoords: pointToCoords
+    render: render
   };
 }
 

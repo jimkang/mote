@@ -6,10 +6,9 @@ var seedrandom = require('seedrandom');
 var createGriddler = require('./griddler').create;
 var _ = require('lodash');
 var createClock = require('./clock').create;
-var createMove = require('./actions/move').create;
-var callBackOnNextTick = require('conform-async').callBackOnNextTick;
 var queue = require('queue-async');
 var createFloorLayer = require('./layers/floor-layer').create;
+var createGuysLayer = require('./layers/guys-layer').create;
 
 var seed = (new Date).getTime().toString();
 
@@ -20,11 +19,11 @@ var probable = createProbable({
 });
 
 var layers = {};
-
-var guyRenderer;
-var guyCells;
 var griddler;
 var clock;
+
+var cellWidth = 25;
+var cellHeight = 25;
 
 function start() {
   griddler = createGriddler();
@@ -37,28 +36,26 @@ function start() {
 
   layers.floor = createFloorLayer({
     probable: probable,
-    griddler: griddler
+    griddler: griddler,
+    cellWidth: cellWidth,
+    cellHeight: cellHeight
   });
+
 
   var floor = d3.select('.floor');
   floor.on('click', function floorClicked() {
     var point = d3.mouse(floor.node());
-    var coords = floorRenderer.pointToCoords(point);
+    var coords = pointToCoords(point);
     console.log('Click at ', point, 'which maps to coords', coords);
 
     kickOffPlanning();
   });
 
-  guyCells = d3.range(5).map(generateGuyCell);
-
-  var setGuyCell = _.curry(griddler.setCell)('guys');
-  guyCells.forEach(setGuyCell);
-
-  guyRenderer = createLayerRenderer({
-    cellWidth: 25,
-    cellHeight: 25,
-    cellClass: 'guy-cell',
-    layerSelector: '.guys'
+  layers.guys = createGuysLayer({
+    probable: probable,
+    griddler: griddler,
+    cellWidth: cellWidth,
+    cellHeight: cellHeight
   });
 
   clock.on('tickDone', advanceAllToNextState);
@@ -72,7 +69,7 @@ function kickOffPlanning() {
     griddler: griddler
   };
 
-  var planFns = _.pluck(guyCells, 'plan');
+  var planFns = _.pluck(layers.guys.cells, 'plan');
   var q = queue();
   planFns.forEach(function queuePlan(planFn) {
     q.defer(planFn, planPack);
@@ -95,7 +92,7 @@ function advanceAllToNextState() {
 
 function updateCells() {
   layers.floor.cells.forEach(updateCell);
-  guyCells.forEach(updateCell);
+  layers.guys.cells.forEach(updateCell);
 }
 
 function updateCell(cell) {
@@ -108,38 +105,11 @@ function updateCell(cell) {
 
 function renderLayers() {
   layers.floor.render();
-  guyRenderer.render(griddler.getLayerCells('guys'));
+  layers.guys.render();
 }
 
-function generateGuyCell() {
-  var guy = {
-    id: idmaker.randomId(5),
-    plan: function plan(opts, done) {
-      opts.clock.queueAction(createMove({
-        actor: guy,
-        griddler: opts.griddler,
-        vector: pickRandomVector()
-      }));
-      callBackOnNextTick(done);
-    },
-    live: {
-      coords: [
-        probable.roll(10),
-        probable.roll(10)
-      ]
-    },
-    next: {
-      coords: []
-    }
-  };
-
-  return guy;
-}
-
-var range = [-1, 0, 1];
-
-function pickRandomVector() {
-  return [probable.pickFromArray(range), probable.pickFromArray(range)];
+function pointToCoords(point) {
+  return [~~(point[0]/cellWidth), ~~(point[1]/cellHeight)];
 }
 
 module.exports = {

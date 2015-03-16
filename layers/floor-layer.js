@@ -20,7 +20,7 @@ function createFloorLayer(opts) {
     throw new Error('griddler not provided to floor layer.');
   }
 
-  floorCells = d3.range(100).map(generateFloorCell);
+  var floorCells = d3.range(100).map(generateFloorCell);
   var setFloorCell = _.curry(griddler.setCell)('floor');
   floorCells.forEach(setFloorCell);
 
