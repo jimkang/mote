@@ -3,12 +3,9 @@ var createLayerRenderer = require('./layer-renderer').create;
 var idmaker = require('idmaker');
 var createProbable = require('probable').createProbable;
 var seedrandom = require('seedrandom');
-var createGriddler = require('./griddler').create;
 var _ = require('lodash');
-var createClock = require('./clock').create;
 var queue = require('queue-async');
-var createFloorLayer = require('./layers/floor-layer').create;
-var createGuysLayer = require('./layers/guys-layer').create;
+var createGame = require('./game').create;
 
 var seed = (new Date).getTime().toString();
 
@@ -22,25 +19,14 @@ var layers = {};
 var griddler;
 var clock;
 
-var cellWidth = 25;
-var cellHeight = 25;
+var game;
 
 function start() {
-  griddler = createGriddler();
-
-  clock = createClock({
-    flipCoin: function flipCoin() {
-      return probable.roll(2) === 0;
-    }
-  });
-
-  layers.floor = createFloorLayer({
+  game = createGame({
     probable: probable,
-    griddler: griddler,
-    cellWidth: cellWidth,
-    cellHeight: cellHeight
+    cellWidth: 25,
+    cellHeight: 25
   });
-
 
   var floor = d3.select('.floor');
   floor.on('click', function floorClicked() {
@@ -51,25 +37,18 @@ function start() {
     kickOffPlanning();
   });
 
-  layers.guys = createGuysLayer({
-    probable: probable,
-    griddler: griddler,
-    cellWidth: cellWidth,
-    cellHeight: cellHeight
-  });
-
-  clock.on('tickDone', advanceAllToNextState);
+  game.clock.on('tickDone', advanceAllToNextState);
 
   renderLayers();
 }
 
 function kickOffPlanning() {
   var planPack = {
-    clock: clock,
-    griddler: griddler
+    clock: game.clock,
+    griddler: game.griddler
   };
 
-  var planFns = _.pluck(layers.guys.cells, 'plan');
+  var planFns = _.pluck(game.layers.guys.cells, 'plan');
   var q = queue();
   planFns.forEach(function queuePlan(planFn) {
     q.defer(planFn, planPack);
@@ -82,7 +61,7 @@ function execute(error) {
     console.log(error);
   }
 
-  clock.tick();
+  game.clock.tick();
 }
 
 function advanceAllToNextState() {
@@ -91,8 +70,8 @@ function advanceAllToNextState() {
 }
 
 function updateCells() {
-  layers.floor.cells.forEach(updateCell);
-  layers.guys.cells.forEach(updateCell);
+  game.layers.floor.cells.forEach(updateCell);
+  game.layers.guys.cells.forEach(updateCell);
 }
 
 function updateCell(cell) {
@@ -104,12 +83,12 @@ function updateCell(cell) {
 }
 
 function renderLayers() {
-  layers.floor.render();
-  layers.guys.render();
+  game.layers.floor.render();
+  game.layers.guys.render();
 }
 
 function pointToCoords(point) {
-  return [~~(point[0]/cellWidth), ~~(point[1]/cellHeight)];
+  return [~~(point[0]/25), ~~(point[1]/25)];
 }
 
 module.exports = {
