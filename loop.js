@@ -6,6 +6,8 @@ var seedrandom = require('seedrandom');
 var _ = require('lodash');
 var queue = require('queue-async');
 var createGame = require('./game').create;
+var callBackOnNextTick = require('conform-async').callBackOnNextTick;
+var createPhaser = require('./phaser').create;
 
 var seed = (new Date).getTime().toString();
 
@@ -28,21 +30,28 @@ function start() {
     cellHeight: 25
   });
 
+  var phaser = createPhaser({
+    phases: [
+      plan,
+      execute,
+      update,
+      render
+    ]
+  });
+
   var floor = d3.select('.floor');
   floor.on('click', function floorClicked() {
     var point = d3.mouse(floor.node());
     var coords = pointToCoords(point);
     console.log('Click at ', point, 'which maps to coords', coords);
 
-    kickOffPlanning();
+    phaser.runNextPhase();
   });
 
-  game.clock.on('tickDone', advanceAllToNextState);
-
-  renderLayers();
+  render();
 }
 
-function kickOffPlanning() {
+function plan(done) {
   var planPack = {
     clock: game.clock,
     griddler: game.griddler
@@ -53,25 +62,18 @@ function kickOffPlanning() {
   planFns.forEach(function queuePlan(planFn) {
     q.defer(planFn, planPack);
   });
-  q.awaitAll(execute);
+  q.awaitAll(done);
+  // TODO, maybe: Look at error.
 }
 
-function execute(error) {
-  if (error) {
-    console.log(error);
-  }
-
-  game.clock.tick();
+function execute(done) {
+  game.clock.tick(done);
 }
 
-function advanceAllToNextState() {
-  updateCells();
-  renderLayers();
-}
-
-function updateCells() {
+function update(done) {
   game.layers.floor.cells.forEach(updateCell);
   game.layers.guys.cells.forEach(updateCell);
+  callBackOnNextTick(done);
 }
 
 function updateCell(cell) {
@@ -82,9 +84,12 @@ function updateCell(cell) {
   }
 }
 
-function renderLayers() {
+function render(done) {
   game.layers.floor.render();
   game.layers.guys.render();
+  if (done) {
+    callBackOnNextTick(done);
+  }
 }
 
 function pointToCoords(point) {

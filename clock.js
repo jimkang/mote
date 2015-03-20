@@ -1,5 +1,5 @@
 var callBackOnNextTick = require('conform-async').callBackOnNextTick;
-var EventEmitter = require('events').EventEmitter;
+// var EventEmitter = require('events').EventEmitter;
 var async = require('async');
 var _ = require('lodash');
 
@@ -14,7 +14,9 @@ function createClock(opts) {
     throw new Error('No flip provided to clock.');
   }
 
-  var emitter = new EventEmitter();
+  var tickDoneCallback;
+
+  // var emitter = new EventEmitter();
 
   function queueAction(action) {
     actions.push(action);
@@ -28,13 +30,17 @@ function createClock(opts) {
     return actions.length;
   }
 
-  function tick() {
+  function tick(done) {
+    tickDoneCallback = done;
     runActions(cleanUpTick);
   }
 
   function cleanUpTick() {
     clearQueue();
-    emitter.emit('tickDone');
+    // emitter.emit('tickDone');
+    if (tickDoneCallback) {
+      tickDoneCallback();
+    }
   }
 
   function runActions(done) {
@@ -57,8 +63,8 @@ function createClock(opts) {
     queueAction: queueAction,
     clearQueue: clearQueue,
     getNumberOfQueuedActions: getNumberOfQueuedActions,
-    on: emitter.on.bind(emitter),
-    removeListener: emitter.removeListener.bind(emitter)
+    // on: emitter.on.bind(emitter),
+    // removeListener: emitter.removeListener.bind(emitter)
   };  
 }
 

@@ -61,16 +61,16 @@ test('Queue actions', function testQueueActions(t) {
 
   t.equal(clock.getNumberOfQueuedActions(), 4, 'Queue has actions.');
 
-  clock.on('tickDone', function checkFinalAction() {
+  function checkFinalAction() {
     t.equal(
       lastActionThatRan,
       'action4',
       'action4 is the last action run by time tickDone is emitted.'
     );
     t.equal(clock.getNumberOfQueuedActions(), 0, 'Queue is cleared.');
-  });
+  }
 
-  clock.tick();
+  clock.tick(checkFinalAction);
 });
 
 // Who starts the clock? UI, after checking to make sure all the AI stuff is done.
